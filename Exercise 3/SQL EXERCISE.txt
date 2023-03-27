@@ -1,0 +1,47 @@
+-- View all “Germany” customers and their orderdetails. If a customer has not made any orders then he should not be included in the result.
+SELECT cu.contactFirstName, cu.contactLastName, cu.country, ord.*
+FROM customers cu
+INNER JOIN orders ord ON cu.customerNumber = ord.customerNumber 
+WHERE country="Germany" AND ord.orderNumber IS NOT NULL;
+
+-- Find the Customer who has the most orders. If more than 1 customer has the most orders then all customers should be displayed
+SELECT customerNumber, customerName, contactFirstName, contactLastName, city, country, salesRepEmployeeNumber, creditLimit
+FROM customers 
+WHERE customerNumber IN (
+	SELECT customerNumber
+	FROM orders
+	GROUP BY customerNumber
+	HAVING COUNT(*) = (
+		SELECT MAX(Temp.Cnt)
+		FROM (
+			SELECT COUNT(*) AS Cnt
+			FROM orders
+			GROUP BY customerNumber
+			) AS Temp
+	)
+);
+
+-- List all employees and the their revenue amount (based on payments table)
+SELECT emp.firstName, emp.lastName, SUM(pmt.amount) AS Revenue
+FROM customers cu
+INNER JOIN payments pmt ON cu.customerNumber = pmt.customerNumber
+INNER JOIN employees emp ON cu.salesRepEmployeeNumber = emp.employeeNumber
+GROUP BY emp.employeeNumber;
+
+-- List all products which have been ordered the last month. (since the database is a bit old we assume we are now at 2005-01-01 )
+SELECT prd.productName, od.ordernumber, ord.orderDate
+FROM orderdetails od
+INNER JOIN products prd ON od.productCode = prd.productCode
+INNER JOIN orders ord ON od.orderNumber = ord.orderNumber
+WHERE orderDate BETWEEN '2004-12-01' AND '2004-12-31';
+
+-- Create a new table named employeedetails which should contain data like: bankAccount, address, phoneNumber, personalEmail
+CREATE TABLE employeedetails (
+    employeeNumber INT NOT NULL,
+    bankAccount INT NOT NULL,
+    address VARCHAR(30) NOT NULL,
+    phoneNumber VARCHAR(30) NOT NULL,
+    personalEmail VARCHAR(30) NOT NULL,
+    PRIMARY KEY (employeeNumber),
+    FOREIGN KEY (employeeNumber) REFERENCES employees (employeeNumber)
+);
