@@ -4,15 +4,15 @@ import com.lhind.internship.springboot.model.dto.FlightDTO;
 import com.lhind.internship.springboot.model.entity.Flight;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FlightService {
-    public FlightDTO save(Flight flight);
+    FlightDTO save(Flight f);
 
-    public List<FlightDTO> findAll();
+    List<FlightDTO> findAll();
 
-    public FlightDTO findById(int id);
+    Optional<Flight> findById(Integer id);
 
-    public void delete(int id);
+    void delete(Flight f);
 
-    public FlightDTO convertToDTO(Flight flight);
 }

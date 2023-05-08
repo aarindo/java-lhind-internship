@@ -1,65 +1,60 @@
 package com.lhind.internship.springboot.service.impl;
 
+import com.lhind.internship.springboot.mapper.BookingMapper;
+import com.lhind.internship.springboot.mapper.FlightMapper;
 import com.lhind.internship.springboot.model.dto.BookingDTO;
+import com.lhind.internship.springboot.model.dto.FlightDTO;
 import com.lhind.internship.springboot.model.entity.Booking;
+import com.lhind.internship.springboot.model.entity.Flight;
 import com.lhind.internship.springboot.repository.BookingRepository;
+import com.lhind.internship.springboot.repository.FlightRepository;
 import com.lhind.internship.springboot.service.BookingService;
-import com.lhind.internship.springboot.service.FlightService;
-import com.lhind.internship.springboot.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
-    private final BookingRepository bookingRepository;
-    private final FlightService flightService;
-    private final UserService userService;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, FlightService flightService, UserService userService) {
-        this.bookingRepository = bookingRepository;
-        this.flightService = flightService;
-        this.userService = userService;
-    }
+    private BookingRepository bookingRepository;
+    private FlightRepository flightRepository;
+    private BookingMapper bookingMapper;
+    private FlightMapper flightMapper;
 
     @Override
-    public BookingDTO save(Booking booking) {
-        return convertToDTO(bookingRepository.save(booking));
+    public Booking save(Booking booking) {
+        Booking bookingNew = new Booking();
+        bookingNew.setUser(booking.getUser());
+        bookingNew.setBookingDate(booking.getBookingDate());
+        bookingNew.setBookingStatus(booking.getBookingStatus());
+        bookingNew.setFlights(booking.getFlights());
+        bookingNew = bookingRepository.save(bookingNew);
+        return bookingNew;
     }
 
     @Override
     public List<BookingDTO> findAll() {
-        List<BookingDTO> bookingDTOList = bookingRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
-
-        return bookingDTOList;
+        List<Booking> bookings = bookingRepository.findAll();
+        return bookings.stream().map(bookingMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
-    public BookingDTO findById(int id) {
-        Booking booking;
-        Optional<Booking> bookingOptional = bookingRepository.findById(id);
-        if (bookingOptional.isPresent()){
-            booking = bookingOptional.get();
-            return convertToDTO(booking);
-        }
-        else {
-            return null;
-        }
+    public Optional<Booking> findById(Integer id){
+        return bookingRepository.findById(id);
     }
 
     @Override
-    public void delete(int id) {
-        bookingRepository.deleteById(id);
+    public List<FlightDTO> findAllFlights(Integer id) {
+        List<Flight> flights = flightRepository.findFlightByBookings(bookingRepository.findById(id).get());
+        return flights.stream().map(flightMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
-    public BookingDTO convertToDTO(Booking booking) {
-        BookingDTO bookingDTO = new BookingDTO();
-        bookingDTO.setBookingDate((Date) booking.getBookingStartDate());
-        bookingDTO.setBookingStatus(booking.getBookingStatus());
-        return bookingDTO;
+    public void delete(Booking u){
+        bookingRepository.delete(u);
     }
 }

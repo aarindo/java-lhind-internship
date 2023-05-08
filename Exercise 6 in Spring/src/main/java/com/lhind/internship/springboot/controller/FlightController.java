@@ -1,58 +1,42 @@
 package com.lhind.internship.springboot.controller;
 
+import com.lhind.internship.springboot.mapper.FlightMapper;
 import com.lhind.internship.springboot.model.dto.FlightDTO;
 import com.lhind.internship.springboot.model.entity.Flight;
 import com.lhind.internship.springboot.service.FlightService;
-import org.springframework.http.HttpStatus;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/flights")
+@AllArgsConstructor
 public class FlightController {
+    FlightService flightService;
+    FlightMapper flightMapper;
 
-    private final FlightService flightService;
-
-    public FlightController(FlightService flightService) {
-        this.flightService = flightService;
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<FlightDTO>> findAll() {
+        return ResponseEntity.ok(flightService.findAll());
     }
 
-    @GetMapping
-    public List<FlightDTO> findAll(){
-        return flightService.findAll();
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
+    public ResponseEntity<FlightDTO> findById(@PathVariable("id") Integer id) {
+        Optional<Flight> flightOptional = flightService.findById(id);
+        return flightOptional.map(flight -> ResponseEntity.ok(flightMapper.toDto(flight))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{id}")
-    public FlightDTO findById(@PathVariable(name = "id") int id){
-        FlightDTO flightDTO = flightService.findById(id);
-        if (flightDTO != null){
-            return flightDTO;
-        }
-        else {
-            throw new ResponseStatusException(HttpStatus.resolve(404), "Flight not found");
-        }
+    @RequestMapping(method = RequestMethod.POST, value = "/add")
+    public ResponseEntity<FlightDTO> updateFlight(@RequestBody Flight flight) {
+        return ResponseEntity.ok(flightService.save(flight));
     }
 
-    @PostMapping
-    public FlightDTO save(@RequestBody Flight flight){
-        return flightService.save(flight);
-    }
-
-    @PutMapping
-    public FlightDTO put(@RequestBody Flight flight){
-        return flightService.save(flight);
-    }
-
-    @DeleteMapping("/{id}")
-    public Boolean delete(@PathVariable(name = "id") int id){
-        try {
-            flightService.delete(id);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
+    @RequestMapping(method = RequestMethod.DELETE, value = "/delete/{id}")
+    public void delete(@PathVariable("id") Integer id) {
+        flightService.delete(flightService.findById(id).get());
     }
 }
 

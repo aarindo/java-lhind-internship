@@ -1,55 +1,20 @@
 package com.lhind.internship.springboot.model.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.lhind.internship.springboot.model.entity.User;
+import com.lhind.internship.springboot.model.enums.RoleEnum;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@JsonSerialize
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Component
 public class UserDTO {
-
-    private Long id;
-    private String firstName;
-    private String middleName;
-    private String lastName;
-
-    public UserDTO() {}
-
-    public UserDTO(User user) {
-        this.setId(user.getId());
-        this.setFirstName(user.getFirstName());
-        this.setMiddleName(user.getMiddleName());
-        this.setLastName(user.getLastName());
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
+    private String username;
+    private RoleEnum role;
+    private String firstname;
+    private String lastname;
+    private String phoneNumber;
+    private String email;
 }

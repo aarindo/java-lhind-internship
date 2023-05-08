@@ -1,46 +1,22 @@
 package com.lhind.internship.springboot.model.dto;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.lhind.internship.springboot.model.entity.Booking;
 import com.lhind.internship.springboot.model.enums.BookingStatus;
 
-import java.sql.Date;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@JsonSerialize
+import java.util.Date;
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Component
 public class BookingDTO {
-    private Integer id;
+    private String username;
     private BookingStatus bookingStatus;
     private Date bookingDate;
-
-    public BookingDTO() {}
-
-    public BookingDTO(Booking booking) {
-        this.setId(booking.getId());
-        this.setBookingDate((Date) booking.getBookingStartDate());
-        this.setBookingStatus(booking.getBookingStatus());
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public BookingStatus getBookingStatus() {
-        return bookingStatus;
-    }
-
-    public void setBookingStatus(BookingStatus bookingStatus) {
-        this.bookingStatus = bookingStatus;
-    }
-
-    public Date getBookingDate() {
-        return bookingDate;
-    }
-
-    public void setBookingDate(Date bookingDate) {
-        this.bookingDate = bookingDate;
-    }
+    private List<FlightDTO> flights;
+    private List<Integer> flightIds;
 }

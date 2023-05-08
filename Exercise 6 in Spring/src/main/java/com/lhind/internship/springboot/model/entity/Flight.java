@@ -1,15 +1,18 @@
 package com.lhind.internship.springboot.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import java.sql.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
+import lombok.Data;
 
+import java.sql.Date;
+import java.util.List;
+
+@Data
 @Entity
 @Table(name = "flight")
 public class Flight {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
@@ -26,75 +29,16 @@ public class Flight {
     private Integer flightNumber;
 
     @Column(name = "departure_date")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date departureDate;
 
     @Column(name = "arrival_date")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date arrivalDate;
 
     @Column(name = "status")
     private String status;
 
-
-    public Integer getId() {
-        return id;
-    }
-
-
-    public String getOrigin() {
-        return origin;
-    }
-
-    public void setOrigin(String origin) {
-        this.origin = origin;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public String getAirline() {
-        return airline;
-    }
-
-    public void setAirline(String airline) {
-        this.airline = airline;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-
-    public Integer getFlightNumber() {
-        return flightNumber;
-    }
-
-    public void setFlightNumber(Integer flightNumber) {
-        this.flightNumber = flightNumber;
-    }
-
-    public Date getDepartureDate() {
-        return departureDate;
-    }
-
-    public void setDepartureDate(Date departureDate) {
-        this.departureDate = departureDate;
-    }
-
-    public Date getArrivalDate() {
-        return arrivalDate;
-    }
-
-    public void setArrivalDate(Date arrivalDate) {
-        this.arrivalDate = arrivalDate;
-    }
-
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "flights")
+    private List<Booking> bookings;
 }
