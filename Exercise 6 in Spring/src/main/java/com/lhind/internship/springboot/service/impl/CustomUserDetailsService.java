@@ -1,8 +1,9 @@
 package com.lhind.internship.springboot.service.impl;
 
+import com.lhind.internship.springboot.model.entity.User;
 import com.lhind.internship.springboot.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.User;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,8 +22,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
     }
 
-    private UserDetails toUserDetails(com.lhind.internship.springboot.model.entity.User user) {
-        return User.builder()
+    private UserDetails toUserDetails(User user) {
+        return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .roles(user.getRole().toString())

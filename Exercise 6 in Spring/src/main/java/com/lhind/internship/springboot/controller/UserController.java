@@ -3,9 +3,8 @@ package com.lhind.internship.springboot.controller;
 import com.lhind.internship.springboot.mapper.UserMapper;
 import com.lhind.internship.springboot.model.dto.UserDTO;
 import com.lhind.internship.springboot.model.entity.User;
-import com.lhind.internship.springboot.service.BookingService;
-import com.lhind.internship.springboot.service.UserDetailService;
 import com.lhind.internship.springboot.service.UserService;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,20 +16,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
+@Schema
 public class UserController {
 
     UserService userService;
-    UserDetailService userDetailService;
-    BookingService bookingService;
     UserMapper userMapper;
 
-    @PreAuthorize(value = "hasRole('ROLE_MANAGER')")
+    @PreAuthorize(value = "hasRole('ADMIN')")
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<UserDTO>> get(){
         return ResponseEntity.ok(userService.findAll());
     }
 
-    @PreAuthorize(value = "hasRole('ROLE_MANAGER')")
+    @PreAuthorize(value = "hasRole('ADMIN')")
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Integer id) {
         User user1 = userService.findById(id);
@@ -42,21 +40,20 @@ public class UserController {
         }
     }
 
-    @PreAuthorize(value = "hasRole('ROLE_MANAGER')")
     @RequestMapping(method = RequestMethod.POST, value = {"/add"})
     public ResponseEntity<UserDTO> saveUser(@RequestBody User user) {
         userService.save(user);
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
-    @PreAuthorize(value = "hasRole('ROLE_MANAGER')")
+    @PreAuthorize(value = "hasRole('ADMIN')")
     @RequestMapping(method = RequestMethod.PUT, value = "/update/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody User updatedUser) {
         User savedUser = userService.update(id, updatedUser);
         return ResponseEntity.ok(userMapper.toDto(savedUser));
     }
 
-    @PreAuthorize(value = "hasRole('ROLE_MANAGER')")
+    @PreAuthorize(value = "hasRole('ADMIN')")
     @RequestMapping(method = RequestMethod.DELETE, value = "/delete/{id}")
     public void deleteUser(@PathVariable Integer id){
         userService.delete(id);
